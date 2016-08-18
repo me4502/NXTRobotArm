@@ -6,11 +6,7 @@ function main
     global is_down;
     is_down = false;
     
-    points{1} = [0, 0];
-    points{2} = [500, 500];
-    points{3} = [1, 3];
-    points{4} = [500, 500];
-    points{5} = [0, 0];
+    points = [0 0; 500 500; 1 3; 500 500; 0 0];
     
     global motorA;
     motorA = NXTMotor('A');
@@ -33,8 +29,9 @@ function main
             else
                 StartDrawing();
             end
+        else
+            HandToPosition(x); 
         end
-        HandToPosition(x); 
     end
     
     StopDrawing();
@@ -43,17 +40,32 @@ function main
 end
 
 function HandToPosition(position)
-    first_joint_distance = 83;
-    second_joint_distance = 92;
+    distance_a = 83;
+    distance_b = 92;
+    
+    x = position(1);
+    y = position(2);
+    
+    Disp(strcat(strcat(num2str(x), ' '), num2str(y)));
+    
+    d = (x*x + y*y - distance_a * distance_a - distance_b * distance_b) / (2 * distance_a * distance_b);
+    theta_2 = atan(d, sqrt(1-(d*d)));
+    
+    tx = cos(theta_2) * distance_b;
+    ty = sin(theta_2) * distance_b;
+    
+    theta_1 = atan2(x, y) - atan2(distance_a - tx, ty);
+    
+    Disp(num2str(theta_1) + ' ' + num2str(theta_2));
     
     global motorA;
-    motorA.TachoLimit = 90;
-    motorA.Power = -10;
+    motorA.TachoLimit = 360;
+    motorA.Power = 25;
     motorA.SendToNXT();
     
     global motorB;
     motorB.TachoLimit = 90;
-    motorB.Power = -10;
+    motorB.Power = 0;
     motorB.SendToNXT();
 end
 
