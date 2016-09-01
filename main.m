@@ -56,8 +56,11 @@ function HandToPosition(position)
     
     theta_1 = atan2(x, y) - atan2(distance_a - tx, ty);
     
+    % Read current position from motor, and determine rotations required.
     data = motorA.ReadFromNXT();
     motorA.TachoLimit = round(abs(data.Position - (theta_1 * 180 / pi))) * joint_a_gear_ratio;
+    
+    % If it needs to rotate, do the rotations.
     if (motorA.TachoLimit > 0)
         if (data.Position > theta_1)
             motorA.Power = 25;
@@ -69,8 +72,11 @@ function HandToPosition(position)
         motorA.WaitFor();
     end
     
+    % Read current position from motor, and determine rotations required.
     data = motorB.ReadFromNXT();
     motorB.TachoLimit = round(abs(data.Position - (theta_2 * 180 / pi))) * joint_b_gear_ratio;
+    
+    % If it needs to rotate, do the rotations.
     if (motorB.TachoLimit > 0)
         if (data.Position > theta_2)
             motorB.Power = 25;
@@ -86,12 +92,15 @@ function StartDrawing
     global is_down
     global motorC;
     global joint_c_gear_ratio;
+    % Don't put the pen down if it's already drawing.
     if (is_down)
         return;
     else
+        % Move the pen up.
         motorC.TachoLimit = 90 * joint_c_gear_ratio;
         motorC.Power = -10;
         motorC.SendToNXT();
+        motorC.WaitFor();
         is_down = true;
     end
 end
@@ -100,12 +109,15 @@ function StopDrawing
     global is_down
     global motorC
     global joint_c_gear_ratio;
+    % Don't pull the pen up if it's not drawing already.
     if not (is_down)
         return;
     else
+        % Move the pen down.
         motorC.TachoLimit = 90 * joint_c_gear_ratio;
         motorC.Power = 10;
         motorC.SendToNXT();
+        motorC.WaitFor();
         is_down = false;
     end
 end
@@ -124,6 +136,8 @@ function SetupGlobals
     motorC = NXTMotor('C');
     motorC.ResetPosition();
     
+    % Set the transformation matrix. This converts world-space to
+    % robot-space. TODO
     global transform_matrix;
     transform_matrix = [];
 
@@ -131,9 +145,9 @@ function SetupGlobals
     global distance_a;
     distance_a = 75;
     global distance_b;
-    distance_b = 200; % This one still needs measuring.
+    distance_b = 200; % This one still needs measuring. TODO
     
-    % Hardcoded gear ratios of each joint
+    % Hardcoded gear ratios of each joint. Measure all of these. TODO
     global joint_a_gear_ratio;
     joint_a_gear_ratio = 1.0;
     global joint_b_gear_ratio;
