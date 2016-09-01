@@ -1,5 +1,6 @@
 function main
-    % Connect to the NXT.
+    % Connect to the NXT - Ensuring that it is closed first.
+    COM_CloseNXT('all')
     mainBrick = COM_OpenNXT();
     COM_SetDefaultNXT(mainBrick);
 
@@ -58,7 +59,7 @@ function HandToPosition(position)
     
     % Read current position from motor, and determine rotations required.
     data = motorA.ReadFromNXT();
-    motorA.TachoLimit = round(abs(data.Position - (theta_1 * 180 / pi))) * joint_a_gear_ratio;
+    motorA.TachoLimit = round(abs(data.Position - (theta_1 * 180 / pi)) * joint_a_gear_ratio);
     
     % If it needs to rotate, do the rotations.
     if (motorA.TachoLimit > 0)
@@ -74,7 +75,7 @@ function HandToPosition(position)
     
     % Read current position from motor, and determine rotations required.
     data = motorB.ReadFromNXT();
-    motorB.TachoLimit = round(abs(data.Position - (theta_2 * 180 / pi))) * joint_b_gear_ratio;
+    motorB.TachoLimit = round(abs(data.Position - (theta_2 * 180 / pi)) * joint_b_gear_ratio);
     
     % If it needs to rotate, do the rotations.
     if (motorB.TachoLimit > 0)
@@ -97,7 +98,7 @@ function StartDrawing
         return;
     else
         % Move the pen up.
-        motorC.TachoLimit = 90 * joint_c_gear_ratio;
+        motorC.TachoLimit = round(90 * joint_c_gear_ratio);
         motorC.Power = -10;
         motorC.SendToNXT();
         motorC.WaitFor();
@@ -114,7 +115,7 @@ function StopDrawing
         return;
     else
         % Move the pen down.
-        motorC.TachoLimit = 90 * joint_c_gear_ratio;
+        motorC.TachoLimit = round(90 * joint_c_gear_ratio);
         motorC.Power = 10;
         motorC.SendToNXT();
         motorC.WaitFor();
@@ -139,6 +140,7 @@ function SetupGlobals
     % Set the transformation matrix. This converts world-space to
     % robot-space. TODO
     global transform_matrix;
+    % Setup the DH Parameters. THIS REQUIRES A WORKING ROBOT. TODO
     transform_matrix = [];
 
     % Hardcoded distances of each joint
@@ -149,7 +151,7 @@ function SetupGlobals
     
     % Hardcoded gear ratios of each joint. Measure all of these. TODO
     global joint_a_gear_ratio;
-    joint_a_gear_ratio = 1.0;
+    joint_a_gear_ratio = 1.4;
     global joint_b_gear_ratio;
     joint_b_gear_ratio = 1.0;
     global joint_c_gear_ratio;
