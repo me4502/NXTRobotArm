@@ -1,19 +1,28 @@
 function main
-    % Connect to the NXT - Ensuring that it is closed first.
-    COM_CloseNXT('all')
-    mainBrick = COM_OpenNXT();
-    COM_SetDefaultNXT(mainBrick);
+    % Setup NXT Connection
+    SetupNXT();
 
     % Call the globals setup.
     SetupGlobals();
 
     global is_down;
-        
+    global starting_point;
+    global last_point;
+    
+    %starting_point = [380 80];
     % 10000 10000; for pen toggle. Pen starts down.
-    points = [380 80; 20 80; 20 380; 320 320; 280 380];
-                
+    %points = [20 80; 20 380; 320 320; 280 380];
+    
+    starting_point = [350 350] - 200;
+    last_point = starting_point;
+    points = [350 50; 50 50; 50 350] - 200;
+    
+    GetStartingPosition();
+    
     for point = points.'
-        point
+        % Print out the point.
+        disp(point);
+        
         % If pen toggle, do pen stuff
         if isequal(point, [10000 10000]) %TODO FIX ME - THIS RETURNS FALSE
             if (is_down)
@@ -24,140 +33,11 @@ function main
         else
             % Draw to the position.
             HandToPosition(point); 
+            last_point = point;
         end
     end
         
     % Close afterwards.
     COM_CloseNXT('all')
     clear global;
-end
-
-function HandToPosition(position)    
-    global distance_a;
-    global distance_b;
-    global joint_a_gear_ratio;
-    global joint_b_gear_ratio;
-    global motorA;
-    global motorB;
-
-    % Grab the positions we want to go to.
-    x = position(1) - 200;
-    y = position(2) - 200;
-        
-    % Grab the `D` value. D = (x_c^2 + y_c^2 - a_1^2 - a_2^2)/(2.a_1.a_2)
-    d = (x^2 + y^2 - distance_a^2 - distance_b^2) / (2 * distance_a * distance_b);
-        
-    % Grab theta 2, which is atan2(d, sqrt(1 - d^2)) - If this returns div
-    % by zero, it's not possible to reach that spot.
-    theta_2 = atan2(d, sqrt(1 - d^2));
-    
-    % Multiply the cos and sin of theta 2 by the distance of joint b.
-    tx = cos(theta_2) * distance_b;
-    ty = sin(theta_2) * distance_b;
-    
-    theta_1 = atan2(x, y) - atan2(distance_a - tx, ty);
-    
-    % Read current position from motor, and determine rotations required.
-    data = motorA.ReadFromNXT();
-    motorA.TachoLimit = round(abs(data.Position - (theta_1 * 180 / pi)) * joint_a_gear_ratio);
-    
-    % If it needs to rotate, do the rotations.
-    if (motorA.TachoLimit > 0)
-        if (data.Position > theta_1)
-            motorA.Power = 25;
-        else
-            motorA.Power = -25;
-        end
-        
-        motorA.SendToNXT();
-        motorA.WaitFor();
-    end
-    
-    % Read current position from motor, and determine rotations required.
-    data = motorB.ReadFromNXT();
-    motorB.TachoLimit = round(abs(data.Position - (theta_2 * 180 / pi)) * joint_b_gear_ratio);
-    
-    % If it needs to rotate, do the rotations.
-    if (motorB.TachoLimit > 0)
-        if (data.Position > theta_2)
-            motorB.Power = 25;
-        else
-            motorB.Power = -25;
-        end    
-        motorB.SendToNXT();
-        motorB.WaitFor();
-    end
-end
-
-function StartDrawing
-    global is_down
-    global motorC;
-    global joint_c_gear_ratio;
-    % Don't put the pen down if it's already drawing.
-    if (is_down)
-        return;
-    else
-        % Move the pen up.
-        motorC.TachoLimit = round(90 * joint_c_gear_ratio);
-        motorC.Power = -10;
-        motorC.SendToNXT();
-        motorC.WaitFor();
-        is_down = true;
-    end
-end
-
-function StopDrawing
-    global is_down
-    global motorC
-    global joint_c_gear_ratio;
-    % Don't pull the pen up if it's not drawing already.
-    if not (is_down)
-        return;
-    else
-        % Move the pen down.
-        motorC.TachoLimit = round(90 * joint_c_gear_ratio);
-        motorC.Power = 10;
-        motorC.SendToNXT();
-        motorC.WaitFor();
-        is_down = false;
-    end
-end
-
-function SetupGlobals
-    % Define motors as globals.
-    global motorA;
-    motorA = NXTMotor('A');
-    motorA.ResetPosition();
-    
-    global motorB;
-    motorB = NXTMotor('B');
-    motorB.ResetPosition();
-    
-    global motorC;
-    motorC = NXTMotor('C');
-    motorC.ResetPosition();
-    
-    % Set the transformation matrix. This converts world-space to
-    % robot-space. TODO
-    global transform_matrix;
-    % Setup the DH Parameters. THIS REQUIRES A WORKING ROBOT. TODO
-    transform_matrix = [];
-
-    % Hardcoded distances of each joint
-    global distance_a;
-    distance_a = 75;
-    global distance_b;
-    distance_b = 200; % This one still needs measuring. TODO
-    
-    % Hardcoded gear ratios of each joint. Measure all of these. TODO
-    global joint_a_gear_ratio;
-    joint_a_gear_ratio = 1.4;
-    global joint_b_gear_ratio;
-    joint_b_gear_ratio = 1.0;
-    global joint_c_gear_ratio;
-    joint_c_gear_ratio = 1.0;
-    
-    % Define pen state.
-    global is_down;
-    is_down = false;
 end
