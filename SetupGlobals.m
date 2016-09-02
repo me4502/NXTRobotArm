@@ -1,3 +1,4 @@
+% Setup the global variables required for the rest of the program to work.
 function SetupGlobals    
     % Set the transformation matrix. This converts world-space to
     % robot-space. TODO

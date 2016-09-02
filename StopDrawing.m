@@ -1,3 +1,4 @@
+% Raises the drawing arm if applicable. Requires the globals to be setup.
 function StopDrawing
     global is_down
     global motorC

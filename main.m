@@ -17,7 +17,7 @@ function main
     last_point = starting_point;
     points = [350 50; 50 50; 50 350] - 200;
     
-    GetStartingPosition();
+    SetupStartingPosition();
     
     for point = points.'
         % Print out the point.

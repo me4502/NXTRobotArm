@@ -1,3 +1,5 @@
+% Get the angles the motors are currently at. Requires globals to be
+% initialized.
 function [joint1_rotation, joint2_rotation] = GetCurrentAngles()
     global motorA;
     global motorB;

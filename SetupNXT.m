@@ -1,3 +1,4 @@
+% Setup the connection to the NXT. Closes if already opened.
 function SetupNXT()
     % Connect to the NXT - Ensuring that it is closed first.
     COM_CloseNXT('all')

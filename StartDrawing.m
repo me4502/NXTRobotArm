@@ -1,3 +1,4 @@
+% Lowers the drawing arm if applicable. Requires the globals to be setup.
 function StartDrawing
     global is_down
     global motorC;
