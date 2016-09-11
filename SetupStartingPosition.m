@@ -1,8 +1,8 @@
 % Setup the starting position. Requires the globals to be initialized.
 function SetupStartingPosition()
     global starting_point;
-    global offset_theta1;
-    global offset_theta2;
+    global offset_theta;
+    global offset_distance;
 
-    [offset_theta1, offset_theta2] = GetAngles(starting_point);    
+    [offset_theta, offset_distance] = GetAngleAndDistance(starting_point);    
 end

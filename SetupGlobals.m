@@ -1,11 +1,5 @@
 % Setup the global variables required for the rest of the program to work.
 function SetupGlobals    
-    % Set the transformation matrix. This converts world-space to
-    % robot-space. TODO
-    global transform_matrix;
-    % Setup the DH Parameters. THIS REQUIRES A WORKING ROBOT. TODO
-    transform_matrix = [];
-
     % Hardcoded distances of each joint
     global distance_a;
     distance_a = 75;
@@ -16,7 +10,7 @@ function SetupGlobals
     global joint_a_gear_ratio;
     joint_a_gear_ratio = 1.4;
     global joint_b_gear_ratio;
-    joint_b_gear_ratio = 1.0;
+    joint_b_gear_ratio = 9.0;
     global joint_c_gear_ratio;
     joint_c_gear_ratio = 1.0;
     

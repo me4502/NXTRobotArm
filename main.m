@@ -13,11 +13,18 @@ function main
     % 10000 10000; for pen toggle. Pen starts down.
     %points = [20 80; 20 380; 320 320; 280 380];
     
-    starting_point = [350 350] - 200;
+    starting_point = [380 20] - 200;
     last_point = starting_point;
-    points = [350 50; 50 50; 50 350] - 200;
+    %points = [280 50; 130 30; 20 20; 20 150; 60 340; 210 380; 330 340; 380 160; 380 20] - 200;
+    points = [60 100; 20 380; 380 380];
+    
+    %points = [20 280];
+    
+    points = points - 200;
     
     SetupStartingPosition();
+    
+    interpolate = true;
     
     for point = points.'
         % Print out the point.
@@ -32,10 +39,16 @@ function main
             end
         else
             % Draw to the position.
-            HandToPosition(point); 
+            if (interpolate)
+                InterpolatePoint(point); 
+            else
+                HandToPosition(point);
+            end
             last_point = point;
         end
     end
+    
+    NXT_PlayTone(440, 440)
         
     % Close afterwards.
     COM_CloseNXT('all')
