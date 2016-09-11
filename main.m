@@ -15,16 +15,15 @@ function main
     
     starting_point = [380 20] - 200;
     last_point = starting_point;
-    %points = [280 50; 130 30; 20 20; 20 150; 60 340; 210 380; 330 340; 380 160; 380 20] - 200;
-    points = [60 100; 20 380; 380 380];
     
-    %points = [20 280];
-    
+    % Overshoot by 40 in direction of movement due to inaccuracy in motors.
+    points = [20 20];
+        
     points = points - 200;
     
     SetupStartingPosition();
     
-    interpolate = true;
+    interpolate = false;
     
     for point = points.'
         % Print out the point.
@@ -45,6 +44,8 @@ function main
                 HandToPosition(point);
             end
             last_point = point;
+            
+            NXT_PlayTone(800, 800)
         end
     end
     

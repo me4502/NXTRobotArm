@@ -9,10 +9,14 @@ function SetupNXT()
     global motorA;
     motorA = NXTMotor('A');
     motorA.ResetPosition();
+    motorA.ActionAtTachoLimit = 'BRAKE';
+    %motorA.SpeedRegulation = false;
     
     global motorB;
     motorB = NXTMotor('B');
     motorB.ResetPosition();
+    motorB.ActionAtTachoLimit = 'BRAKE';
+    %motorB.SpeedRegulation = false;
     
     global motorC;
     motorC = NXTMotor('C');
