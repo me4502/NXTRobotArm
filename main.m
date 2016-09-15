@@ -17,7 +17,7 @@ function main
     last_point = starting_point;
     
     % Overshoot by 40 in direction of movement due to inaccuracy in motors.
-    points = [20 20];
+    points = [210 75; 110 40; 0 40];
         
     points = points - 200;
     
