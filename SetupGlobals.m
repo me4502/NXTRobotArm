@@ -10,7 +10,7 @@ function SetupGlobals
     global joint_a_gear_ratio;
     joint_a_gear_ratio = 1.4;
     global joint_b_gear_ratio;
-    joint_b_gear_ratio = 9.47;
+    joint_b_gear_ratio = 7.058; %9.47;
     global joint_c_gear_ratio;
     joint_c_gear_ratio = 1.0;
     
