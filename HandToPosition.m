@@ -20,7 +20,7 @@ function HandToPosition(position)
     converted_theta = round((theta_difference * 180/pi) * joint_a_gear_ratio);
     converted_distance = round((distance - distance_current) * joint_b_gear_ratio);
             
-    max_motor_power = 80;
+    max_motor_power = 50;
     
     if (abs(converted_theta) > abs(converted_distance))
         motorA.Power = max_motor_power;
@@ -34,7 +34,7 @@ function HandToPosition(position)
     end
     
     % Do the directions
-    if (converted_theta < 0)
+    if (converted_theta > 0)
         motorA.Power = -1 * motorA.Power;
     end
     
